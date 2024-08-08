@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
 import { Button } from "./ui/button";
+import { useTokens } from "@/hooks/useTokens";
+import { json } from "stream/consumers";
+import { TokenList } from "./TokenList";
 
 const ProfileCard = ({ publicKey }: { publicKey: string }) => {
   const session = useSession();
@@ -40,6 +43,7 @@ const ProfileCard = ({ publicKey }: { publicKey: string }) => {
 
 function Assets({ publicKey }: { publicKey: string }) {
   const [copied, setCopied] = useState(false);
+  const { tokenBalances, loading } = useTokens(publicKey);
 
   useEffect(() => {
     if (copied) {
@@ -49,13 +53,26 @@ function Assets({ publicKey }: { publicKey: string }) {
       return () => clearTimeout(timeout);
     }
   }, [copied]);
+
+  if (loading) {
+    return (
+      <div className="space-y-2 py-4">
+        <Skeleton className="h-4 w-[250px]" />
+        <Skeleton className="h-4 w-[200px]" />
+      </div>
+    );
+  }
   return (
     <div className="text-gray-400 mt-4">
       {" "}
       <div className="">Account assets</div>
-      <div className="flex justify-between">
-        <div></div>
-
+      <div className="flex justify-between py-2">
+        <div className="flex gap-2 items-end">
+          <div className="text-4xl text-black font-bold flex gap-5 justify-center items-center">
+            ${tokenBalances?.totalBalance.toFixed(2)}
+          </div>
+          <div className="text-xl text-gray-600 font-semibold">USD</div>
+        </div>
         <div>
           <Button
             variant={"secondary"}
@@ -67,6 +84,9 @@ function Assets({ publicKey }: { publicKey: string }) {
             {copied ? "Copied" : "Your wallet adress"}
           </Button>
         </div>
+      </div>
+      <div>
+        <TokenList tokens={tokenBalances?.tokens || []} />
       </div>
     </div>
   );
