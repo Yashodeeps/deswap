@@ -8,6 +8,7 @@ import { Button } from "./ui/button";
 import { useTokens } from "@/hooks/useTokens";
 import { json } from "stream/consumers";
 import { TokenList } from "./TokenList";
+import { Separator } from "./ui/separator";
 
 const ProfileCard = ({ publicKey }: { publicKey: string }) => {
   const session = useSession();
@@ -44,6 +45,11 @@ const ProfileCard = ({ publicKey }: { publicKey: string }) => {
 function Assets({ publicKey }: { publicKey: string }) {
   const [copied, setCopied] = useState(false);
   const { tokenBalances, loading } = useTokens(publicKey);
+  const [activeTab, setActiveTab] = useState<Tab>("tokens");
+
+  type Tab = "tokens" | "send" | "withdraw" | "swap" | "add";
+
+  const tabs: Tab[] = ["tokens", "send", "withdraw", "swap", "add"];
 
   useEffect(() => {
     if (copied) {
@@ -73,9 +79,9 @@ function Assets({ publicKey }: { publicKey: string }) {
           </div>
           <div className="text-xl text-gray-600 font-semibold">USD</div>
         </div>
-        <div>
+        <div className="text-black">
           <Button
-            variant={"secondary"}
+            variant={"outline"}
             onClick={() => {
               navigator.clipboard.writeText(publicKey);
               setCopied(true);
@@ -85,7 +91,20 @@ function Assets({ publicKey }: { publicKey: string }) {
           </Button>
         </div>
       </div>
-      <div>
+      <div className="flex justify-between gap-3 py-2 text-black">
+        {tabs.map((tab) => (
+          <Button
+            key={tab}
+            variant={activeTab === tab ? "default" : `outline`}
+            className={`w-full ${activeTab !== tab && "bg-gray-200"} `}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab.toLocaleUpperCase()}
+          </Button>
+        ))}
+      </div>
+      <Separator className="my-4" />
+      <div className={activeTab === "tokens" ? "block" : "hidden"}>
         <TokenList tokens={tokenBalances?.tokens || []} />
       </div>
     </div>

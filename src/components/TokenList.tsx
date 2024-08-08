@@ -1,11 +1,8 @@
 import { TokenWithBalance } from "@/hooks/useTokens";
-import { Separator } from "./ui/separator";
 
 export function TokenList({ tokens }: { tokens: TokenWithBalance[] }) {
   return (
     <div className="py-2">
-      <Separator className="my-4" />
-
       {tokens.map((t) => (
         <TokenRow key={t.name} token={t} />
       ))}
