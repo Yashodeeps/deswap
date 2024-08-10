@@ -9,6 +9,7 @@ import { useTokens } from "@/hooks/useTokens";
 import { json } from "stream/consumers";
 import { TokenList } from "./TokenList";
 import { Separator } from "./ui/separator";
+import { Swap } from "./Swap";
 
 const ProfileCard = ({ publicKey }: { publicKey: string }) => {
   const session = useSession();
@@ -72,7 +73,7 @@ function Assets({ publicKey }: { publicKey: string }) {
     <div className="text-gray-400 mt-4">
       {" "}
       <div className="">Account assets</div>
-      <div className="flex justify-between py-2">
+      <div className="flex justify-between py-2 max-md:flex-wrap max-md:gap-3">
         <div className="flex gap-2 items-end">
           <div className="text-4xl text-black font-bold flex gap-5 justify-center items-center">
             ${tokenBalances?.totalBalance.toFixed(2)}
@@ -91,12 +92,12 @@ function Assets({ publicKey }: { publicKey: string }) {
           </Button>
         </div>
       </div>
-      <div className="flex justify-between gap-3 py-2 text-black">
+      <div className="flex justify-between gap-3 py-2 text-black max-md:flex-wrap ">
         {tabs.map((tab) => (
           <Button
             key={tab}
             variant={activeTab === tab ? "default" : `outline`}
-            className={`w-full ${activeTab !== tab && "bg-gray-200"} `}
+            className={`w-full  ${activeTab !== tab && "bg-gray-200"} `}
             onClick={() => setActiveTab(tab)}
           >
             {tab.toLocaleUpperCase()}
@@ -106,6 +107,9 @@ function Assets({ publicKey }: { publicKey: string }) {
       <Separator className="my-4" />
       <div className={activeTab === "tokens" ? "block" : "hidden"}>
         <TokenList tokens={tokenBalances?.tokens || []} />
+      </div>
+      <div className={activeTab === "swap" ? "block" : "hidden"}>
+        <Swap publicKey={publicKey} />
       </div>
     </div>
   );
